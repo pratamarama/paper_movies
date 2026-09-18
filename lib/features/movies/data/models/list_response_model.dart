@@ -10,7 +10,7 @@ abstract class ListResponseModel<T> with _$ListResponseModel<T> {
   const factory ListResponseModel({
     @Default(1) int page,
     @Default(1) @JsonKey(name: 'total_pages') int totalPages,
-    @Default(<dynamic>[]) List<T> results,
+    @JsonKey(name: 'results') List<T>? results,
   }) = _ListResponseModel<T>;
 
   factory ListResponseModel.fromJson(
