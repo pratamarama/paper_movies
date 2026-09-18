@@ -1,11 +1,13 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:paper_movies/enums/app_error.dart';
+import 'package:paper_movies/features/movies/domain/entities/category.dart';
 import 'package:paper_movies/features/movies/domain/entities/movie.dart';
 import 'package:paper_movies/features/movies/domain/usecases/filter_movie_use_case.dart';
+import 'package:paper_movies/features/movies/domain/usecases/get_category_list_use_case.dart';
 import 'package:paper_movies/features/movies/domain/usecases/get_movie_list_use_case.dart';
 import 'package:paper_movies/features/movies/domain/usecases/search_movie_use_case.dart';
 
@@ -17,12 +19,15 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
   final GetMovieListUseCase _getMovieListUseCase;
   final FilterMovieUseCase _filterMovieUseCase;
   final SearchMovieUseCase _searchMovieUseCase;
+  final GetCategoryListUseCase _getCategoryListUseCase;
 
   MovieListBloc({
     required GetMovieListUseCase getMovieListUseCase,
     required FilterMovieUseCase filterMovieUseCase,
     required SearchMovieUseCase searchMovieUseCase,
-  }) : _searchMovieUseCase = searchMovieUseCase,
+    required GetCategoryListUseCase getCategoryListUseCase,
+  }) : _getCategoryListUseCase = getCategoryListUseCase,
+       _searchMovieUseCase = searchMovieUseCase,
        _filterMovieUseCase = filterMovieUseCase,
        _getMovieListUseCase = getMovieListUseCase,
        super(const MovieListState()) {
@@ -36,16 +41,18 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
       emit(state.copyWith(isLoading: true));
 
       final List<Movie> movieList = await _getMovieListUseCase.execute(page: 1);
+      final List<Category> categoryList = await _getCategoryListUseCase.execute();
 
       emit(
         state.copyWith(
           initialMovieList: movieList,
           movieList: movieList,
+          categoryList: categoryList,
           isLoading: false,
         ),
       );
     } catch (e) {
-      final String errorMessage = e is AppError ? e.message : e.toString();
+      final String errorMessage = e is AppError ? e.message : 'Something went wrong.';
 
       debugPrint(e.toString());
       emit(state.copyWith(isLoading: false, errorMessage: errorMessage));
@@ -56,14 +63,15 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
     try {
       emit(state.copyWith(isLoading: true));
 
-      final List<Movie> movieList = _filterMovieUseCase.execute(
-        movieList: state.movieList,
-        rateValue: event.rateValue,
+      final (List<Movie>, List<Category>) filterMovie = _filterMovieUseCase.execute(
+        movieList: state.initialMovieList,
+        categoryIndex: event.categoryIndex,
+        categoryList: state.categoryList,
       );
 
-      emit(state.copyWith(movieList: movieList, isLoading: false));
+      emit(state.copyWith(movieList: filterMovie.$1, isLoading: false, categoryList: filterMovie.$2));
     } catch (e) {
-      final String errorMessage = e is AppError ? e.message : e.toString();
+      final String errorMessage = e is AppError ? e.message : 'Something went wrong.';
 
       debugPrint(e.toString());
       emit(state.copyWith(isLoading: false, errorMessage: errorMessage));
@@ -75,13 +83,13 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
       emit(state.copyWith(isLoading: true));
 
       final List<Movie> movieList = _searchMovieUseCase.execute(
-        movieList: state.movieList,
+        movieList: state.initialMovieList,
         text: event.text,
       );
 
       emit(state.copyWith(movieList: movieList, isLoading: false));
     } catch (e) {
-      final String errorMessage = e is AppError ? e.message : e.toString();
+      final String errorMessage = e is AppError ? e.message : 'Something went wrong.';
 
       debugPrint(e.toString());
       emit(state.copyWith(isLoading: false, errorMessage: errorMessage));

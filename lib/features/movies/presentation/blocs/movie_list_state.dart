@@ -7,5 +7,6 @@ abstract class MovieListState with _$MovieListState {
     @Default('') String errorMessage,
     @Default(<Movie>[]) List<Movie> initialMovieList,
     @Default(<Movie>[]) List<Movie> movieList,
+    @Default(<Category>[]) List<Category> categoryList,
   }) = _MovieListState;
 }
