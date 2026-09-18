@@ -3,6 +3,7 @@
 class Movie {
   final String title;
   final DateTime releaseDate;
+  final double voteAverage;
 
-  const Movie({required this.title, required this.releaseDate});
+  const Movie({required this.title, required this.releaseDate, required this.voteAverage});
 }

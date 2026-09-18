@@ -10,6 +10,7 @@ class MovieMapper {
     return Movie(
       title: model.title ?? '',
       releaseDate: model.releaseDate ?? DateTime.fromMillisecondsSinceEpoch(0),
+      voteAverage: model.voteAverage ?? 0,
     );
   }
 }

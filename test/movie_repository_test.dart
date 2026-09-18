@@ -17,7 +17,7 @@ void main() {
         movieMapper: const MovieMapper(),
       );
 
-      final List<Movie> result = await repository.getMovieList();
+      final List<Movie> result = await repository.getMovieList(page: 1);
 
       expect(result, isA<List<Movie>>());
       expect(result.length, 2);

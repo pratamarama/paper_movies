@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:paper_movies/features/movies/constants/api_constant.dart';
+import 'package:paper_movies/constants/api_constant.dart';
+import 'package:paper_movies/enums/app_error.dart';
 
 /// Created by Pratama Ramadhan on 18/09/26.
 
@@ -17,18 +18,22 @@ class ApiServiceImpl implements ApiService {
     required int page,
     Function(int, int)? onReceiveProgress,
   }) async {
-    final Response<Map<String, dynamic>> response = await _dioClient.get(
-      APIEndpoint.discoverMovie.url,
-      queryParameters: <String, dynamic>{
-        'include_adult': false,
-        'include_video': false,
-        'language': 'en-US',
-        'page': page,
-        'sort_by': 'popularity.desc',
-      },
-      onReceiveProgress: onReceiveProgress,
-    );
+    try {
+      final Response<Map<String, dynamic>> response = await _dioClient.get(
+        APIEndpoint.discoverMovie.url,
+        queryParameters: <String, dynamic>{
+          'include_adult': false,
+          'include_video': false,
+          'language': 'en-US',
+          'page': page,
+          'sort_by': 'popularity.desc',
+        },
+        onReceiveProgress: onReceiveProgress,
+      );
 
-    return response;
+      return response;
+    } on DioException catch (e) {
+      throw AppError<String>.connectionError(e.message ?? 'Connection Error');
+    }
   }
 }
