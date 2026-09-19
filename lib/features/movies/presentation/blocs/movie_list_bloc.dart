@@ -32,6 +32,7 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
        _getMovieListUseCase = getMovieListUseCase,
        super(const MovieListState()) {
     on<_Initial>(_onInitial);
+    on<_FetchMovieList>(_onFetchMovieList);
     on<_Filter>(_onFilter);
     on<_Search>(_onSearch);
   }
@@ -40,14 +41,29 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
     try {
       emit(state.copyWith(isLoading: true));
 
-      final List<Movie> movieList = await _getMovieListUseCase.execute(page: 1);
       final List<Category> categoryList = await _getCategoryListUseCase.execute();
+
+      emit(state.copyWith(categoryList: categoryList, isLoading: false));
+    } catch (e) {
+      final String errorMessage = e is AppError ? e.message : 'Something went wrong.';
+
+      debugPrint(e.toString());
+      emit(state.copyWith(isLoading: false, errorMessage: () => errorMessage));
+    }
+
+    add(const _FetchMovieList());
+  }
+
+  Future<void> _onFetchMovieList(_FetchMovieList event, Emitter<MovieListState> emit) async {
+    try {
+      emit(state.copyWith(isLoading: true));
+
+      final List<Movie> movieList = await _getMovieListUseCase.execute(page: 1);
 
       emit(
         state.copyWith(
           initialMovieList: movieList,
           movieList: movieList,
-          categoryList: categoryList,
           isLoading: false,
         ),
       );
@@ -55,7 +71,7 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
       final String errorMessage = e is AppError ? e.message : 'Something went wrong.';
 
       debugPrint(e.toString());
-      emit(state.copyWith(isLoading: false, errorMessage: errorMessage));
+      emit(state.copyWith(isLoading: false, errorMessage: () => errorMessage));
     }
   }
 
@@ -74,7 +90,7 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
       final String errorMessage = e is AppError ? e.message : 'Something went wrong.';
 
       debugPrint(e.toString());
-      emit(state.copyWith(isLoading: false, errorMessage: errorMessage));
+      emit(state.copyWith(isLoading: false, errorMessage: () => errorMessage));
     }
   }
 
@@ -100,7 +116,7 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
       final String errorMessage = e is AppError ? e.message : 'Something went wrong.';
 
       debugPrint(e.toString());
-      emit(state.copyWith(isLoading: false, errorMessage: errorMessage));
+      emit(state.copyWith(isLoading: false, errorMessage: () => errorMessage));
     }
   }
 }

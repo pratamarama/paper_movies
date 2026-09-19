@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paper_movies/constants/app_padding.dart';
@@ -39,9 +40,10 @@ class _MovieListPageState extends State<MovieListPage> {
           listenWhen: (MovieListState previous, MovieListState current) =>
               previous.errorMessage != current.errorMessage,
           listener: (BuildContext context, MovieListState state) {
-            if (state.errorMessage.isNotEmpty) {
+            final String? errorMessage = state.errorMessage?.call();
+            if (errorMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.errorMessage), backgroundColor: Colors.red),
+                SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
               );
             }
           },
@@ -65,6 +67,7 @@ class _MovieListPageState extends State<MovieListPage> {
                   ),
                 ),
                 const SizedBox(height: kPaddingMd),
+
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: kPaddingSm),
                   child: Row(
@@ -91,6 +94,7 @@ class _MovieListPageState extends State<MovieListPage> {
                   ),
                 ),
                 const SizedBox(height: kPaddingSm),
+
                 SizedBox(
                   height: 42,
                   child: BlocBuilder<MovieListBloc, MovieListState>(
@@ -129,24 +133,33 @@ class _MovieListPageState extends State<MovieListPage> {
                     onRefresh: () async {
                       context.read<MovieListBloc>().add(const MovieListEvent.initial());
                     },
-                    child: Builder(
-                      builder: (BuildContext context) {
-                        final bool isListEmpty = movieList.isEmpty;
-                        final int itemCount = isListEmpty ? 1 : movieList.length;
+                    child: BlocBuilder<MovieListBloc, MovieListState>(
+                      buildWhen: (MovieListState previous, MovieListState current) =>
+                          previous.isLoading != current.isLoading,
+                      builder: (BuildContext context, MovieListState state) {
+                        return Stack(
+                          children: <Widget>[
+                            if (state.isLoading)
+                              Center(
+                                child: CupertinoActivityIndicator(
+                                  color: Theme.of(context).primaryColor,
+                                  radius: 12.0,
+                                ),
+                              ),
 
-                        return ListView.separated(
-                          padding: const EdgeInsets.symmetric(horizontal: kPaddingSm, vertical: kPaddingMd),
-                          shrinkWrap: true,
-                          itemCount: itemCount,
-                          itemBuilder: (BuildContext context, int index) {
-                            if (isListEmpty) {
-                              return const _EmptyPlaceholder();
-                            }
+                            if (movieList.isEmpty && !state.isLoading) const _EmptyPlaceholder(),
 
-                            final Movie movie = movieList[index];
-                            return MovieCard(movie: movie);
-                          },
-                          separatorBuilder: (_, _) => const SizedBox(height: 8),
+                            ListView.separated(
+                              padding: const EdgeInsets.symmetric(horizontal: kPaddingSm, vertical: kPaddingMd),
+                              shrinkWrap: true,
+                              itemCount: movieList.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final Movie movie = movieList[index];
+                                return MovieCard(movie: movie);
+                              },
+                              separatorBuilder: (_, _) => const SizedBox(height: 8),
+                            ),
+                          ],
                         );
                       },
                     ),
@@ -166,25 +179,27 @@ class _EmptyPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Icon(Icons.movie_outlined, size: 52, color: Colors.grey),
-        SizedBox(height: 12),
-        Text(
-          'No movies found',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Colors.black54,
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(Icons.movie_outlined, size: 52, color: Colors.grey),
+          SizedBox(height: 12),
+          Text(
+            'No movies found',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black54,
+            ),
           ),
-        ),
-        SizedBox(height: 6),
-        Text(
-          'Try another title or filter',
-          style: TextStyle(color: Colors.grey),
-        ),
-      ],
+          SizedBox(height: 6),
+          Text(
+            'Try another title or filter',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ],
+      ),
     );
   }
 }
