@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:paper_movies/constants/api_constant.dart';
 import 'package:paper_movies/enums/app_error.dart';
 
@@ -33,7 +34,14 @@ class ApiServiceImpl implements ApiService {
 
       return response;
     } on DioException catch (e) {
-      throw AppError<String>.connectionError(e.message ?? 'Connection Error');
+      debugPrint('Dio error: $e');
+
+      final Object? error = e.error;
+      if (error is AppError) {
+        throw error;
+      }
+
+      throw const AppError<String>.connectionError('Connection Error');
     }
   }
 }

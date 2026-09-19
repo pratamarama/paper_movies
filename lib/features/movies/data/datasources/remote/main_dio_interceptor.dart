@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:paper_movies/enums/app_error.dart';
 
 /// Created by Pratama Ramadhan on 18/09/26.
 
@@ -28,8 +29,16 @@ class MainDioInterceptor extends Interceptor {
         message = 'Server Error';
     }
 
+    try {
+      final Map<String, dynamic>? responseJson = error.response?.data as Map<String, dynamic>?;
+      final String? responseMessage = responseJson?['status_message'] as String?;
+      message = responseMessage ?? message;
+    } catch (e) {
+      debugPrint('Parsing error: $e');
+    }
+
     if (message.isNotEmpty) {
-      return handler.next(error.copyWith(message: message));
+      return handler.next(error.copyWith(error: AppError<String>.connectionError(message)));
     }
 
     return handler.next(error);
