@@ -20,7 +20,7 @@ class ApiServiceImpl implements ApiService {
   }) async {
     try {
       final Response<Map<String, dynamic>> response = await _dioClient.get(
-        APIEndpoint.discoverMovie.url,
+        APIEndpoint.discoverMovie.fullPath,
         queryParameters: <String, dynamic>{
           'include_adult': false,
           'include_video': false,

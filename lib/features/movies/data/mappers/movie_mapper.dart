@@ -11,6 +11,7 @@ class MovieMapper {
       title: model.title ?? '',
       releaseDate: model.releaseDate ?? DateTime.fromMillisecondsSinceEpoch(0),
       voteAverage: model.voteAverage ?? 0,
+      posterPath: model.posterPath,
     );
   }
 }

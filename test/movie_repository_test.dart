@@ -13,7 +13,7 @@ void main() {
     test('returns mapped movie entities from the remote datasource', () async {
       final _FakeMovieRemoteDatasource datasource = _FakeMovieRemoteDatasource();
       final MovieRepositoryImpl repository = MovieRepositoryImpl(
-        remoteDatasource: datasource,
+        movieRemoteDatasource: datasource,
         movieMapper: const MovieMapper(),
       );
 

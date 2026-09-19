@@ -82,8 +82,16 @@ class MovieListBloc extends Bloc<MovieListEvent, MovieListState> {
     try {
       emit(state.copyWith(isLoading: true));
 
-      final List<Movie> movieList = _searchMovieUseCase.execute(
+      final int categoryIndex = state.categoryList.indexWhere((Category element) => element.activeStatus);
+
+      final (List<Movie>, List<Category>) filterMovie = _filterMovieUseCase.execute(
         movieList: state.initialMovieList,
+        categoryIndex: categoryIndex,
+        categoryList: state.categoryList,
+      );
+
+      final List<Movie> movieList = _searchMovieUseCase.execute(
+        movieList: filterMovie.$1,
         text: event.text,
       );
 

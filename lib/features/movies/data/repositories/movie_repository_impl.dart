@@ -13,9 +13,9 @@ class MovieRepositoryImpl implements MovieRepository {
   final MovieMapper _movieMapper;
 
   const MovieRepositoryImpl({
-    required MovieRemoteDatasource remoteDatasource,
+    required MovieRemoteDatasource movieRemoteDatasource,
     required MovieMapper movieMapper,
-  }) : _movieRemoteDatasource = remoteDatasource,
+  }) : _movieRemoteDatasource = movieRemoteDatasource,
        _movieMapper = movieMapper;
 
   @override
@@ -29,7 +29,7 @@ class MovieRepositoryImpl implements MovieRepository {
   @override
   List<Category> get getCategoryList {
     return <Category>[
-      const Category(name: 'All', rateValue: 2, activeStatus: false),
+      const Category(name: 'All', rateValue: 2, activeStatus: true),
       const Category(name: 'Bad', rateValue: 4, activeStatus: false),
       const Category(name: 'Good', rateValue: 6, activeStatus: false),
       const Category(name: 'Great', rateValue: 8, activeStatus: false),
