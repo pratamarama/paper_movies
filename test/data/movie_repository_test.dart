@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:paper_movies/features/movies/data/datasources/movie_remote_datasource.dart';
 import 'package:paper_movies/features/movies/data/mappers/movie_mapper.dart';
 import 'package:paper_movies/features/movies/data/models/list_response_model.dart';
@@ -9,13 +10,15 @@ import 'package:paper_movies/features/movies/domain/entities/movie.dart';
 
 /// Created by Pratama Ramadhan on 18/09/26.
 
+class _MockMovieRemoteDatasource extends Mock implements MovieRemoteDatasource {}
+
 void main() {
   group('MovieRepositoryImpl', () {
     late MovieRemoteDatasource remoteDatasource;
     late MovieRepositoryImpl repository;
 
     setUp(() {
-      remoteDatasource = _FakeMovieRemoteDatasource();
+      remoteDatasource = _MockMovieRemoteDatasource();
       repository = MovieRepositoryImpl(
         movieRemoteDatasource: remoteDatasource,
         movieMapper: const MovieMapper(),
@@ -23,6 +26,15 @@ void main() {
     });
 
     test('returns mapped movie entities from the remote datasource', () async {
+      when(() => remoteDatasource.getMovieList(page: 1, onReceiveProgress: any(named: 'onReceiveProgress'))).thenAnswer(
+        (_) async => ListResponseModel<MovieModel>(
+          results: <MovieModel>[
+            MovieModel(title: 'Inception', releaseDate: DateTime(2023, 1)),
+            MovieModel(title: 'Interstellar', releaseDate: DateTime(2024, 1, 2)),
+          ],
+        ),
+      );
+
       final List<Movie> result = await repository.getMovieList(page: 1);
 
       expect(result, isA<List<Movie>>());
@@ -39,19 +51,4 @@ void main() {
       expect(result.length, 5);
     });
   });
-}
-
-class _FakeMovieRemoteDatasource implements MovieRemoteDatasource {
-  @override
-  Future<ListResponseModel<MovieModel>?> getMovieList({
-    required int page,
-    Function(int, int)? onReceiveProgress,
-  }) async {
-    return ListResponseModel<MovieModel>(
-      results: <MovieModel>[
-        MovieModel(title: 'Inception', releaseDate: DateTime(2023, 1)),
-        MovieModel(title: 'Interstellar', releaseDate: DateTime(2024, 1, 2)),
-      ],
-    );
-  }
 }
