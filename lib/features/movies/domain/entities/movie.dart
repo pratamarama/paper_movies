@@ -35,6 +35,6 @@ extension MovieX on Movie {
   }
 
   String get displayReleaseDate {
-    return DateFormat('yyyy-MM-dd').format(releaseDate);
+    return DateFormat('d MMMM yyyy').format(releaseDate);
   }
 }
