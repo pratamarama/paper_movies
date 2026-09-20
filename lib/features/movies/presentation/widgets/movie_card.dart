@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:paper_movies/constants/app_padding.dart';
 import 'package:paper_movies/features/movies/domain/entities/movie.dart';
 import 'package:paper_movies/features/movies/presentation/extensions/build_context.dart';
@@ -40,7 +39,7 @@ class MovieCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    DateFormat('yyyy-MM-dd').format(movie.releaseDate),
+                    movie.displayReleaseDate,
                     style: const TextStyle(
                       fontSize: 14,
                     ),
@@ -71,8 +70,8 @@ class _PosterTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width * 0.2;
-    final double height = width * 1006 / 749;
+    const double width = 100;
+    const double height = width * 1006 / 749;
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: CachedNetworkImage(

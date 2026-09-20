@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:paper_movies/constants/api_constant.dart';
 
 /// Created by Pratama Ramadhan on 18/09/26.
@@ -19,5 +20,9 @@ extension MovieX on Movie {
 
   String get displayVoteAverage {
     return voteAverage.toStringAsFixed(1);
+  }
+
+  String get displayReleaseDate {
+    return DateFormat('yyyy-MM-dd').format(releaseDate);
   }
 }
