@@ -1,4 +1,4 @@
-import 'package:paper_movies/features/movies/data/datasources/remote/movie_remote_datasource.dart';
+import 'package:paper_movies/features/movies/data/datasources/movie_remote_datasource.dart';
 import 'package:paper_movies/features/movies/data/mappers/movie_mapper.dart';
 import 'package:paper_movies/features/movies/data/models/list_response_model.dart';
 import 'package:paper_movies/features/movies/data/models/movie_model.dart';

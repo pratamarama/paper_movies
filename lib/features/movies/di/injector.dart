@@ -1,7 +1,7 @@
 import 'package:get_it/get_it.dart';
+import 'package:paper_movies/features/movies/data/datasources/movie_remote_datasource.dart';
 import 'package:paper_movies/features/movies/data/datasources/remote/api_service.dart';
 import 'package:paper_movies/features/movies/data/datasources/remote/dio_client.dart';
-import 'package:paper_movies/features/movies/data/datasources/remote/movie_remote_datasource.dart';
 import 'package:paper_movies/features/movies/data/mappers/movie_mapper.dart';
 import 'package:paper_movies/features/movies/data/repositories/movie_repository_impl.dart';
 import 'package:paper_movies/features/movies/domain/repositories/movie_repository.dart';

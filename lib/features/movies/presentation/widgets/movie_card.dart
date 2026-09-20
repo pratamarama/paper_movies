@@ -57,7 +57,7 @@ class MovieCard extends StatelessWidget {
                   ),
                   const SizedBox(height: kPaddingXs),
                   Row(
-                    children: [
+                    children: <Widget>[
                       const Icon(Icons.star_rate, size: 14, color: Colors.orange),
                       const SizedBox(width: kPaddingXs),
                       Text(
