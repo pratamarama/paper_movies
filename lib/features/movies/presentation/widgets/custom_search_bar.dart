@@ -35,6 +35,7 @@ class CustomSearchBar extends StatelessWidget {
               onTapOutside: (PointerDownEvent event) => FocusScope.of(context).requestFocus(FocusNode()),
               decoration: InputDecoration(
                 hintText: hintText,
+                hintStyle: TextStyle(color: Colors.grey[500]),
                 border: InputBorder.none,
                 isDense: true,
               ),

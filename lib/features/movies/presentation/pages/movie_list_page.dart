@@ -59,84 +59,7 @@ class _MovieListPageState extends State<MovieListPage> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const SizedBox(height: kPaddingMd),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: kPaddingMd),
-                  child: CustomSearchBar(
-                    onChanged: (String text) => context.read<MovieListBloc>().add(MovieListEvent.search(text: text)),
-                    controller: _searchController,
-                    hintText: 'Search movie title',
-                    onClear: () {
-                      _searchController.clear();
-                      context.read<MovieListBloc>().add(const MovieListEvent.search(text: ''));
-                    },
-                  ),
-                ),
-                const SizedBox(height: kPaddingMd),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: kPaddingLg),
-                  child: Row(
-                    children: <Widget>[
-                      const Expanded(
-                        child: Text(
-                          'Filter by Rating',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF2C2C2C),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        'Totals = ${movieList.length}',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF4B4B4B),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: kPaddingMd),
-
-                SizedBox(
-                  height: 42,
-                  child: BlocBuilder<MovieListBloc, MovieListState>(
-                    buildWhen: (MovieListState previous, MovieListState current) =>
-                        previous.categoryList != current.categoryList,
-                    builder: (BuildContext context, MovieListState state) {
-                      final List<Category> categoryList = state.categoryList;
-                      final Category? selectedCategory = categoryList.firstWhereOrNull(
-                        (Category element) => element.activeStatus,
-                      );
-
-                      return ListView(
-                        padding: const EdgeInsets.symmetric(horizontal: kPaddingMd),
-                        scrollDirection: Axis.horizontal,
-                        shrinkWrap: true,
-                        children: categoryList.map((Category category) {
-                          final bool isSelected = category == selectedCategory;
-
-                          return CategoryChip(
-                            isSelected: isSelected,
-                            category: category,
-                            onSelected: () {
-                              context.read<MovieListBloc>().add(
-                                MovieListEvent.filter(
-                                  categoryIndex: categoryList.indexOf(category),
-                                  text: _searchController.text,
-                                ),
-                              );
-                            },
-                          );
-                        }).toList(),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: kPaddingXs),
+                _ActionHeader(searchController: _searchController, movieList: movieList),
 
                 Expanded(
                   child: RefreshIndicator(
@@ -170,11 +93,11 @@ class _MovieListPageState extends State<MovieListPage> {
                                   final Movie movie = movieList[index];
                                   return MovieTabletCard(movie: movie);
                                 },
-                                padding: const EdgeInsets.symmetric(horizontal: kPaddingSm, vertical: kPaddingMd),
+                                padding: const EdgeInsets.symmetric(horizontal: kPaddingSm, vertical: kPaddingSm),
                               )
                             else
                               ListView.separated(
-                                padding: const EdgeInsets.symmetric(horizontal: kPaddingMd, vertical: kPaddingMd),
+                                padding: const EdgeInsets.symmetric(horizontal: kPaddingMd, vertical: kPaddingSm),
                                 shrinkWrap: true,
                                 itemCount: movieList.length,
                                 itemBuilder: (BuildContext context, int index) {
@@ -193,6 +116,107 @@ class _MovieListPageState extends State<MovieListPage> {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+class _ActionHeader extends StatelessWidget {
+  final TextEditingController _searchController;
+  final List<Movie> movieList;
+  const _ActionHeader({super.key, required TextEditingController searchController, required this.movieList})
+    : _searchController = searchController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.grey[50],
+      child: Column(
+        children: <Widget>[
+          const SizedBox(height: kPaddingMd),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: kPaddingMd),
+            child: CustomSearchBar(
+              onChanged: (String text) => context.read<MovieListBloc>().add(MovieListEvent.search(text: text)),
+              controller: _searchController,
+              hintText: 'Search movie title',
+              onClear: () {
+                _searchController.clear();
+                context.read<MovieListBloc>().add(const MovieListEvent.search(text: ''));
+              },
+            ),
+          ),
+          const SizedBox(height: kPaddingSm),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: kPaddingLg),
+            child: Row(
+              children: <Widget>[
+                const Expanded(
+                  child: Text(
+                    'Filter by Rating',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF2C2C2C),
+                    ),
+                  ),
+                ),
+                Text(
+                  'Totals = ${movieList.length}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF4B4B4B),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: kPaddingXs),
+
+          SizedBox(
+            height: 42,
+            child: BlocBuilder<MovieListBloc, MovieListState>(
+              buildWhen: (MovieListState previous, MovieListState current) =>
+                  previous.categoryList != current.categoryList,
+              builder: (BuildContext context, MovieListState state) {
+                final List<Category> categoryList = state.categoryList;
+                final Category? selectedCategory = categoryList.firstWhereOrNull(
+                  (Category element) => element.activeStatus,
+                );
+
+                return ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: kPaddingMd),
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  children: categoryList.map((Category category) {
+                    final bool isSelected = category == selectedCategory;
+
+                    return CategoryChip(
+                      isSelected: isSelected,
+                      category: category,
+                      onSelected: () {
+                        context.read<MovieListBloc>().add(
+                          MovieListEvent.filter(
+                            categoryIndex: categoryList.indexOf(category),
+                            text: _searchController.text,
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: kPaddingSm),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            color: Colors.grey[100],
+            height: 2,
+          ),
+        ],
       ),
     );
   }
