@@ -57,6 +57,7 @@ class _MovieListPageState extends State<MovieListPage> {
           builder: (BuildContext context, MovieListState state) {
             final List<Movie> movieList = state.movieList;
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 const SizedBox(height: kPaddingMd),
                 Padding(
@@ -135,6 +136,7 @@ class _MovieListPageState extends State<MovieListPage> {
                     },
                   ),
                 ),
+                const SizedBox(height: kPaddingXs),
 
                 Expanded(
                   child: RefreshIndicator(
