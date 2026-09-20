@@ -65,6 +65,10 @@ class _MovieListPageState extends State<MovieListPage> {
                     onChanged: (String text) => context.read<MovieListBloc>().add(MovieListEvent.search(text: text)),
                     controller: _searchController,
                     hintText: 'Search movie title',
+                    onClear: () {
+                      _searchController.clear();
+                      context.read<MovieListBloc>().add(const MovieListEvent.search(text: ''));
+                    },
                   ),
                 ),
                 const SizedBox(height: kPaddingMd),
@@ -119,7 +123,10 @@ class _MovieListPageState extends State<MovieListPage> {
                             category: category,
                             onSelected: () {
                               context.read<MovieListBloc>().add(
-                                MovieListEvent.filter(categoryIndex: categoryList.indexOf(category)),
+                                MovieListEvent.filter(
+                                  categoryIndex: categoryList.indexOf(category),
+                                  text: _searchController.text,
+                                ),
                               );
                             },
                           );

@@ -4,6 +4,6 @@ part of 'movie_list_bloc.dart';
 abstract class MovieListEvent with _$MovieListEvent {
   const factory MovieListEvent.initial() = _Initial;
   const factory MovieListEvent.fetchMovieList() = _FetchMovieList;
-  const factory MovieListEvent.filter({required int categoryIndex}) = _Filter;
+  const factory MovieListEvent.filter({required int categoryIndex, required String text}) = _Filter;
   const factory MovieListEvent.search({required String text}) = _Search;
 }

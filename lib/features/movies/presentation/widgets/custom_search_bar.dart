@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:paper_movies/constants/app_padding.dart';
 
 /// Created by Pratama Ramadhan on 19/09/26.
 
 class CustomSearchBar extends StatelessWidget {
   final Function(String) onChanged;
+  final Function() onClear;
   final TextEditingController controller;
   final String hintText;
-  const CustomSearchBar({super.key, required this.onChanged, required this.controller, required this.hintText});
+  const CustomSearchBar({
+    super.key,
+    required this.onChanged,
+    required this.controller,
+    required this.hintText,
+    required this.onClear,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +28,7 @@ class CustomSearchBar extends StatelessWidget {
       child: Row(
         children: <Widget>[
           const Icon(Icons.search, color: Colors.grey),
-          const SizedBox(width: 8),
+          const SizedBox(width: kPaddingSm),
           Expanded(
             child: TextField(
               controller: controller,
@@ -32,6 +40,11 @@ class CustomSearchBar extends StatelessWidget {
               ),
               onChanged: onChanged,
             ),
+          ),
+          const SizedBox(width: kPaddingSm),
+          GestureDetector(
+            onTap: onClear,
+            child: const Icon(Icons.clear, color: Colors.grey),
           ),
         ],
       ),
