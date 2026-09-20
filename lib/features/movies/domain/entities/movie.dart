@@ -8,14 +8,26 @@ class Movie {
   final DateTime releaseDate;
   final double voteAverage;
   final String? posterPath;
+  final String? backdropPath;
 
-  const Movie({required this.title, required this.releaseDate, required this.voteAverage, required this.posterPath});
+  const Movie({
+    required this.title,
+    required this.releaseDate,
+    required this.voteAverage,
+    this.posterPath,
+    this.backdropPath,
+  });
 }
 
 extension MovieX on Movie {
   String? get posterUrl {
     if (posterPath == null) return null;
     return '${ApiConstant.imageBaseUrl}/t/p/w500/${posterPath!}';
+  }
+
+  String? get backdropUrl {
+    if (backdropPath == null) return null;
+    return '${ApiConstant.imageBaseUrl}/t/p/w500/${backdropPath!}';
   }
 
   String get displayVoteAverage {

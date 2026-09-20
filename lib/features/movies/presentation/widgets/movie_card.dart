@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:paper_movies/constants/app_padding.dart';
 import 'package:paper_movies/features/movies/domain/entities/movie.dart';
 import 'package:paper_movies/features/movies/presentation/extensions/build_context.dart';
+import 'package:paper_movies/features/movies/presentation/widgets/poster_tile.dart';
 
 /// Created by Pratama Ramadhan on 19/09/26.
 
@@ -23,7 +23,17 @@ class MovieCard extends StatelessWidget {
         padding: const EdgeInsets.all(kPaddingSm),
         child: Row(
           children: <Widget>[
-            _PosterTile(posterPath: movie.posterUrl ?? ''),
+            Builder(
+              builder: (BuildContext context) {
+                const double width = 70;
+                const double height = width * 749 / 499;
+                return PosterTile(
+                  posterPath: movie.posterUrl ?? '',
+                  width: width,
+                  height: height,
+                );
+              },
+            ),
             const SizedBox(width: kPaddingMd),
             Expanded(
               child: Column(
@@ -38,12 +48,14 @@ class MovieCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+                  const SizedBox(height: kPaddingXs),
                   Text(
                     movie.displayReleaseDate,
                     style: const TextStyle(
                       fontSize: 14,
                     ),
                   ),
+                  const SizedBox(height: kPaddingXs),
                   Row(
                     children: [
                       const Icon(Icons.star_rate, size: 14, color: Colors.orange),
@@ -58,27 +70,6 @@ class MovieCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _PosterTile extends StatelessWidget {
-  const _PosterTile({required this.posterPath});
-
-  final String posterPath;
-
-  @override
-  Widget build(BuildContext context) {
-    const double width = 100;
-    const double height = width * 1006 / 749;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: CachedNetworkImage(
-        imageUrl: posterPath,
-        width: width,
-        height: height,
-        fit: BoxFit.cover,
       ),
     );
   }

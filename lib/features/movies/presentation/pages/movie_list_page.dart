@@ -6,6 +6,7 @@ import 'package:paper_movies/constants/app_padding.dart';
 import 'package:paper_movies/features/movies/domain/entities/category.dart';
 import 'package:paper_movies/features/movies/domain/entities/movie.dart';
 import 'package:paper_movies/features/movies/presentation/blocs/movie_list_bloc.dart';
+import 'package:paper_movies/features/movies/presentation/extensions/build_context.dart';
 import 'package:paper_movies/features/movies/presentation/widgets/widgets.dart';
 
 /// Created by Pratama Ramadhan on 18/09/26.
@@ -57,9 +58,9 @@ class _MovieListPageState extends State<MovieListPage> {
             final List<Movie> movieList = state.movieList;
             return Column(
               children: <Widget>[
-                const SizedBox(height: kPaddingSm),
+                const SizedBox(height: kPaddingMd),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: kPaddingSm),
+                  padding: const EdgeInsets.symmetric(horizontal: kPaddingMd),
                   child: CustomSearchBar(
                     onChanged: (String text) => context.read<MovieListBloc>().add(MovieListEvent.search(text: text)),
                     controller: _searchController,
@@ -69,7 +70,7 @@ class _MovieListPageState extends State<MovieListPage> {
                 const SizedBox(height: kPaddingMd),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: kPaddingSm),
+                  padding: const EdgeInsets.symmetric(horizontal: kPaddingLg),
                   child: Row(
                     children: <Widget>[
                       const Expanded(
@@ -93,7 +94,7 @@ class _MovieListPageState extends State<MovieListPage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: kPaddingSm),
+                const SizedBox(height: kPaddingMd),
 
                 SizedBox(
                   height: 42,
@@ -107,7 +108,7 @@ class _MovieListPageState extends State<MovieListPage> {
                       );
 
                       return ListView(
-                        padding: const EdgeInsets.symmetric(horizontal: kPaddingSm),
+                        padding: const EdgeInsets.symmetric(horizontal: kPaddingMd),
                         scrollDirection: Axis.horizontal,
                         shrinkWrap: true,
                         children: categoryList.map((Category category) {
@@ -149,16 +150,30 @@ class _MovieListPageState extends State<MovieListPage> {
 
                             if (movieList.isEmpty && !state.isLoading) const _EmptyPlaceholder(),
 
-                            ListView.separated(
-                              padding: const EdgeInsets.symmetric(horizontal: kPaddingSm, vertical: kPaddingMd),
-                              shrinkWrap: true,
-                              itemCount: movieList.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                final Movie movie = movieList[index];
-                                return MovieCard(movie: movie);
-                              },
-                              separatorBuilder: (_, _) => const SizedBox(height: 8),
-                            ),
+                            if (context.isTablet)
+                              GridView.builder(
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  childAspectRatio: 3 / 2.85,
+                                ),
+                                itemCount: movieList.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  final Movie movie = movieList[index];
+                                  return MovieTabletCard(movie: movie);
+                                },
+                                padding: const EdgeInsets.symmetric(horizontal: kPaddingSm, vertical: kPaddingMd),
+                              )
+                            else
+                              ListView.separated(
+                                padding: const EdgeInsets.symmetric(horizontal: kPaddingMd, vertical: kPaddingMd),
+                                shrinkWrap: true,
+                                itemCount: movieList.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  final Movie movie = movieList[index];
+                                  return MovieCard(movie: movie);
+                                },
+                                separatorBuilder: (_, _) => const SizedBox(height: kPaddingXs),
+                              ),
                           ],
                         );
                       },

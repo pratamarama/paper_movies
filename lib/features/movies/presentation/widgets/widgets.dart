@@ -4,3 +4,5 @@ export 'category_chip.dart';
 export 'custom_app_bar.dart';
 export 'custom_search_bar.dart';
 export 'movie_card.dart';
+export 'movie_tablet_card.dart';
+export 'poster_tile.dart';
