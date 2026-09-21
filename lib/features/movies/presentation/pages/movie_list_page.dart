@@ -62,60 +62,77 @@ class _MovieListPageState extends State<MovieListPage> {
                 _ActionHeader(searchController: _searchController, movieList: movieList),
 
                 Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () async {
-                      context.read<MovieListBloc>().add(const MovieListEvent.initial());
-                    },
-                    child: BlocBuilder<MovieListBloc, MovieListState>(
-                      buildWhen: (MovieListState previous, MovieListState current) =>
-                          previous.isLoading != current.isLoading,
-                      builder: (BuildContext context, MovieListState state) {
-                        return Stack(
-                          children: <Widget>[
-                            if (state.isLoading)
-                              Center(
-                                child: CupertinoActivityIndicator(
-                                  color: Theme.of(context).primaryColor,
-                                  radius: 12.0,
+                  child: Stack(
+                    children: <Widget>[
+                      BlocBuilder<MovieListBloc, MovieListState>(
+                        buildWhen: (MovieListState previous, MovieListState current) =>
+                            previous.isLoading != current.isLoading,
+                        builder: (BuildContext context, MovieListState state) {
+                          if (state.isLoading) {
+                            return Center(
+                              child: CupertinoActivityIndicator(
+                                color: Theme.of(context).primaryColor,
+                                radius: 12.0,
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+
+                      RefreshIndicator(
+                        onRefresh: () async {
+                          context.read<MovieListBloc>().add(const MovieListEvent.initial());
+                        },
+                        child: SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: Column(
+                            children: <Widget>[
+                              if (movieList.isEmpty && !state.isLoading) const _EmptyPlaceholder(),
+                              if (context.isTablet)
+                                Builder(
+                                  builder: (BuildContext context) {
+                                    final double width = (MediaQuery.sizeOf(context).width - kPaddingSm) / 3;
+                                    final double height = width * backdropRatio;
+                                    return GridView.builder(
+                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3,
+                                        mainAxisExtent: height + 130,
+                                      ),
+                                      shrinkWrap: true,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      itemCount: movieList.length,
+                                      itemBuilder: (BuildContext context, int index) {
+                                        final Movie movie = movieList[index];
+                                        return MovieTabletCard(movie: movie);
+                                      },
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: kPaddingSm,
+                                        vertical: kPaddingSm,
+                                      ),
+                                    );
+                                  },
+                                )
+                              else
+                                ListView.separated(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: kPaddingMd,
+                                    vertical: kPaddingSm,
+                                  ),
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: movieList.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    final Movie movie = movieList[index];
+                                    return MovieCard(movie: movie);
+                                  },
+                                  separatorBuilder: (_, _) => const SizedBox(height: kPaddingXs),
                                 ),
-                              ),
-
-                            if (movieList.isEmpty && !state.isLoading) const _EmptyPlaceholder(),
-
-                            if (context.isTablet)
-                              Builder(
-                                builder: (BuildContext context) {
-                                  final double width = (MediaQuery.sizeOf(context).width - kPaddingSm) / 3;
-                                  final double height = width * backdropRatio;
-                                  return GridView.builder(
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      mainAxisExtent: height + 130,
-                                    ),
-                                    itemCount: movieList.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      final Movie movie = movieList[index];
-                                      return MovieTabletCard(movie: movie);
-                                    },
-                                    padding: const EdgeInsets.symmetric(horizontal: kPaddingSm, vertical: kPaddingSm),
-                                  );
-                                },
-                              )
-                            else
-                              ListView.separated(
-                                padding: const EdgeInsets.symmetric(horizontal: kPaddingMd, vertical: kPaddingSm),
-                                shrinkWrap: true,
-                                itemCount: movieList.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  final Movie movie = movieList[index];
-                                  return MovieCard(movie: movie);
-                                },
-                                separatorBuilder: (_, _) => const SizedBox(height: kPaddingXs),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -130,7 +147,7 @@ class _MovieListPageState extends State<MovieListPage> {
 class _ActionHeader extends StatelessWidget {
   final TextEditingController _searchController;
   final List<Movie> movieList;
-  const _ActionHeader({super.key, required TextEditingController searchController, required this.movieList})
+  const _ActionHeader({required TextEditingController searchController, required this.movieList})
     : _searchController = searchController;
 
   @override
@@ -138,6 +155,7 @@ class _ActionHeader extends StatelessWidget {
     return Container(
       color: Colors.grey[50],
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const SizedBox(height: kPaddingMd),
           Padding(
@@ -233,26 +251,29 @@ class _EmptyPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Icon(Icons.movie_outlined, size: 52, color: Colors.grey),
-          SizedBox(height: 12),
-          Text(
-            'No movies found',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.black54,
+    return Center(
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).height / 2,
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(Icons.movie_outlined, size: 52, color: Colors.grey),
+            SizedBox(height: 12),
+            Text(
+              'No movies found',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.black54,
+              ),
             ),
-          ),
-          SizedBox(height: 6),
-          Text(
-            'Try another title or filter',
-            style: TextStyle(color: Colors.grey),
-          ),
-        ],
+            SizedBox(height: 6),
+            Text(
+              'Try another title or filter',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
       ),
     );
   }
