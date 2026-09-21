@@ -1,5 +1,10 @@
 # paper_movies
 
+<img width="300" height="652" alt="Simulator Screenshot - iPhone 16 Pro - 2026-09-21 at 14 58 56" src="https://github.com/user-attachments/assets/19b5407b-852a-4e42-90a8-fbcfb72dcda4" style="margin: 20px;"/>
+
+<img width="453" height="652" alt="Simulator Screenshot - iPad (A16) - 2026-09-21 at 14 58 07" src="https://github.com/user-attachments/assets/c6e7f076-8f9c-44a8-98fc-339b7164dedb" style="margin: 20px;"/>
+
+
 An app for find movies by category and searching by title.
 
 The app displays a clean list of movie results with showing adaptive list view for mobile and tablet devices.
