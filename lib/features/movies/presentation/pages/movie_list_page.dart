@@ -84,51 +84,53 @@ class _MovieListPageState extends State<MovieListPage> {
                         onRefresh: () async {
                           context.read<MovieListBloc>().add(const MovieListEvent.initial());
                         },
-                        child: SingleChildScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          child: Column(
-                            children: <Widget>[
-                              if (movieList.isEmpty && !state.isLoading) const _EmptyPlaceholder(),
-                              if (context.isTablet)
-                                Builder(
-                                  builder: (BuildContext context) {
-                                    final double width = (MediaQuery.sizeOf(context).width - kPaddingSm) / 3;
-                                    final double height = width * backdropRatio;
-                                    return GridView.builder(
-                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 3,
-                                        mainAxisExtent: height + 130,
-                                      ),
-                                      shrinkWrap: true,
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      itemCount: movieList.length,
-                                      itemBuilder: (BuildContext context, int index) {
-                                        final Movie movie = movieList[index];
-                                        return MovieTabletCard(movie: movie);
-                                      },
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: kPaddingSm,
-                                        vertical: kPaddingSm,
-                                      ),
-                                    );
-                                  },
-                                )
-                              else
-                                ListView.separated(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: kPaddingMd,
-                                    vertical: kPaddingSm,
+                        child: Scrollbar(
+                          child: SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: Column(
+                              children: <Widget>[
+                                if (movieList.isEmpty && !state.isLoading) const _EmptyPlaceholder(),
+                                if (context.isTablet)
+                                  Builder(
+                                    builder: (BuildContext context) {
+                                      final double width = (MediaQuery.sizeOf(context).width - kPaddingSm) / 3;
+                                      final double height = width * backdropRatio;
+                                      return GridView.builder(
+                                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3,
+                                          mainAxisExtent: height + 130,
+                                        ),
+                                        shrinkWrap: true,
+                                        physics: const NeverScrollableScrollPhysics(),
+                                        itemCount: movieList.length,
+                                        itemBuilder: (BuildContext context, int index) {
+                                          final Movie movie = movieList[index];
+                                          return MovieTabletCard(movie: movie);
+                                        },
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: kPaddingSm,
+                                          vertical: kPaddingSm,
+                                        ),
+                                      );
+                                    },
+                                  )
+                                else
+                                  ListView.separated(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: kPaddingMd,
+                                      vertical: kPaddingSm,
+                                    ),
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount: movieList.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      final Movie movie = movieList[index];
+                                      return MovieCard(movie: movie);
+                                    },
+                                    separatorBuilder: (_, _) => const SizedBox(height: kPaddingXs),
                                   ),
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: movieList.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    final Movie movie = movieList[index];
-                                    return MovieCard(movie: movie);
-                                  },
-                                  separatorBuilder: (_, _) => const SizedBox(height: kPaddingXs),
-                                ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
