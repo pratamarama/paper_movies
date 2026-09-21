@@ -83,17 +83,23 @@ class _MovieListPageState extends State<MovieListPage> {
                             if (movieList.isEmpty && !state.isLoading) const _EmptyPlaceholder(),
 
                             if (context.isTablet)
-                              GridView.builder(
-                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  childAspectRatio: 3 / 2.85,
-                                ),
-                                itemCount: movieList.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  final Movie movie = movieList[index];
-                                  return MovieTabletCard(movie: movie);
+                              Builder(
+                                builder: (BuildContext context) {
+                                  final double width = (MediaQuery.sizeOf(context).width - kPaddingSm) / 3;
+                                  final double height = width * backdropRatio;
+                                  return GridView.builder(
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3,
+                                      mainAxisExtent: height + 130,
+                                    ),
+                                    itemCount: movieList.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      final Movie movie = movieList[index];
+                                      return MovieTabletCard(movie: movie);
+                                    },
+                                    padding: const EdgeInsets.symmetric(horizontal: kPaddingSm, vertical: kPaddingSm),
+                                  );
                                 },
-                                padding: const EdgeInsets.symmetric(horizontal: kPaddingSm, vertical: kPaddingSm),
                               )
                             else
                               ListView.separated(
@@ -212,7 +218,7 @@ class _ActionHeader extends StatelessWidget {
           ),
           const SizedBox(height: kPaddingSm),
           Container(
-            width: MediaQuery.of(context).size.width,
+            width: MediaQuery.sizeOf(context).width,
             color: Colors.grey[100],
             height: 2,
           ),

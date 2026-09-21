@@ -26,8 +26,8 @@ class MovieTabletCard extends StatelessWidget {
           children: <Widget>[
             Builder(
               builder: (BuildContext context) {
-                final double width = (MediaQuery.of(context).size.width - kPaddingSm) / 3;
-                final double height = width * 281 / 500;
+                final double width = (MediaQuery.sizeOf(context).width - kPaddingSm) / 3;
+                final double height = width * backdropRatio;
                 return PosterTile(posterPath: movie.backdropUrl ?? '', width: width, height: height);
               },
             ),

@@ -14,3 +14,5 @@ const double kPaddingLg = 24.0;
 
 /// Extra Large Padding - 32.0
 const double kPaddingXl = 32.0;
+
+const double backdropRatio = 281 / 500;
